@@ -27,6 +27,9 @@
         // ゲームが始まっているか判定するフラグ
         isStarted: false,
 
+        // ブロックが落下する間隔（ミリ秒）
+        fallMilliSecond: 500,
+
         // 画面サイズY
         displaySizeY: 13,
 
@@ -131,6 +134,18 @@
           this.updateDisplay()
         },
 
+        // ブロックの自動落下（無限ループ）
+        autoFall() {
+          // ゲーム開始状態でなければループを止める
+          if ( !this.isStarted ) return
+
+          // ブロックを１マス落下させる
+          this.moveBlock(1, 0, 0)
+
+          // fallMilliSecond で指定した間隔分待って再帰呼び出しする
+          setTimeout(this.autoFall, this.fallMilliSecond)
+        },
+
         // 描画用テーブルの情報を更新する
         updateDisplay() {
           // 位置が確定したブロック情報を転写
@@ -159,8 +174,11 @@
           // フラグを反転させる
           this.isStarted ^= true
 
-          // ゲーム開始状態でなければゲーム画面を初期化する
+          // ゲーム画面を初期化する
           this.initTable()
+
+          // ゲーム開始状態であればブロックを自動落下させる
+          if (this.isStarted) this.autoFall()
         }
       },
       mounted() {
