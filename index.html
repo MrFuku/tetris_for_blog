@@ -22,6 +22,15 @@
         // 画面サイズX
         displaySizeX: 10,
 
+        // 操作中のブロックの位置情報
+        currentYX: [],
+
+        // 操作中のブロックの傾き
+        currentAngle: 0,
+
+        // 操作中のブロックの色
+        currentColor: 0,
+
         // 位置が確定したブロックの位置情報格納テーブル
         // -1 ブロック非存在, 0 緑ブロック, 1 赤ブロック, 3 青ブロック
         cellsTable: [],
@@ -40,7 +49,19 @@
 
         // 操作対象のブロックの位置を変更する
         moveBlock(moveY, moveX, moveAngle) {
-          console.log(moveY, moveX)
+          // 操作後の座標位置
+          var nextYX = [this.currentYX[0] + moveY, this.currentYX[1] + moveX]
+
+          // 操作後の傾き
+          var nextAngle = (this.currentAngle + 4 + moveAngle) % 4
+          console.log(nextYX, nextAngle)
+
+          // 操作後の値を現在の値に反映させる
+          this.currentYX = nextYX
+          this.currentAngle = nextAngle
+
+          // 描画用テーブルを更新
+          this.updateDisplay()
         },
 
         // 描画用テーブルの情報を更新する
@@ -51,6 +72,9 @@
 
         // ゲーム画面を初期化する
         initTable() {
+          // 操作中のブロック位置を初期化
+          this.currentYX = [0, 3]
+
           // cellsTableのブロック情報を初期化
           this.cellsTable = [] 
           for(var i = 0; i < this.displaySizeY; i++) { this.cellsTable.push( Array(this.displaySizeX).fill(-1) ) }
