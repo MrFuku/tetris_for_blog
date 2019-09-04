@@ -130,8 +130,33 @@
             this.currentAngle = nextAngle
           }
 
+          // 床への着地した場合
+          // 操作前の位置にブロックを固定させ、新しいブロックを生成する
+          if (!result && moveY === 1) {
+            var currentBlock = this.getBlock(nextYX[0] - 1, nextYX[1], this.currentColor, this.currentAngle)
+            this.determineBlock(currentBlock, this.currentColor)
+            this.createNewBlock()
+          }
+
           // 描画用テーブルを更新
           this.updateDisplay()
+        },
+
+        // 新しいブロックを生成する
+        createNewBlock() {
+          // 操作中のブロック位置を初期化
+          this.currentYX = [0, 3]
+
+          // 操作中のブロックの傾きを初期化
+          this.currentAngle = 0
+
+          // 操作中のブロックの色（種類）をランダムで決める
+          this.currentColor = Math.floor( Math.random() * this.usableBlocks.length )
+        },
+
+        // ブロックの位置を固定させる
+        determineBlock(block, color) {
+          block.forEach(cell => { this.cellsTable[cell[0]][cell[1]] = color })
         },
 
         // ブロックの自動落下（無限ループ）
