@@ -5,7 +5,10 @@
   </head>
   <body>
       <div id="app">
-        <p>{{ message }}</p>
+        <h1>簡単テトリス</h1>
+        <li v-for="cells in displayTable">
+            <span v-for="cell in cells" :class="getColor(cell)"></span>
+        </li>
       </div>
   </body>
   <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
@@ -13,10 +16,81 @@
     var app = new Vue({
       el: "#app",
       data: {
-        message: 'Hello Vue.js'
+        // 画面サイズY
+        displaySizeY: 13,
+
+        // 画面サイズX
+        displaySizeX: 10,
+
+        // 位置が確定したブロックの位置情報格納テーブル
+        // -1 ブロック非存在, 0 緑ブロック, 1 赤ブロック, 3 青ブロック
+        cellsTable: [],
+
+        // 描画用のブロック情報格納テーブル
+        displayTable: [],
+      },
+      methods: {
+        // ブロックの種類に応じた色を返す
+        getColor(cell) {
+          if(cell === -1)  return
+          if(cell === 0)   return 'green'
+          if(cell === 1)   return 'red'
+          if(cell === 2)   return 'blue'
+        },
+
+        // 描画用テーブルの情報を更新する
+        updateDisplay() {
+          // 位置が確定したブロック情報を転写
+          this.displayTable = JSON.parse(JSON.stringify(this.cellsTable))
+        },
+
+        // ゲーム画面を初期化する
+        initTable() {
+          // cellsTableのブロック情報を初期化
+          this.cellsTable = [] 
+          for(var i = 0; i < this.displaySizeY; i++) { this.cellsTable.push( Array(this.displaySizeX).fill(-1) ) }
+
+          // 描画用テーブルを更新
+          this.updateDisplay()
+        },
+      },
+      mounted() {
+        // ゲーム画面の初期化
+        this.initTable()
       },
     });
   </script>
   <style>
+
+    h1 {
+      text-align: center;
+    }
+
+    li {
+      text-align: center;
+      list-style: none;
+      height: 30px;
+    }
+
+    .green {
+      background: linear-gradient(45deg, #389406, transparent);
+    }
+
+    .red {
+      background: linear-gradient(45deg, #ee3f3f, transparent);
+    }
+
+    .blue {
+      background: linear-gradient(45deg, #1a5dec, transparent);
+    }
+
+    span {
+      height: 30px;
+      width: 30px;
+      display: inline-block;
+      background: gainsboro;
+      border: 1px solid white;
+      box-sizing: border-box;
+    }
   </style>
 </html>
