@@ -31,6 +31,33 @@
         // 操作中のブロックの色
         currentColor: 0,
 
+        // 緑ブロックの配置情報
+        greenBlock: [
+          [[0,1],[0,2],[1,1],[1,2]],
+          [[0,1],[0,2],[1,1],[1,2]],
+          [[0,1],[0,2],[1,1],[1,2]],
+          [[0,1],[0,2],[1,1],[1,2]],
+        ],
+
+        // 赤ブロックの配置情報
+        redBlock: [
+          [[0,2],[1,2],[2,2],[3,2]],
+          [[2,0],[2,1],[2,2],[2,3]],
+          [[1,2],[2,2],[3,2],[4,2]],
+          [[2,1],[2,2],[2,3],[2,4]],
+        ],
+
+        // 青ブロックの配置情報
+        blueBlock: [
+          [[2,1],[1,2],[2,2],[2,3]],
+          [[2,1],[1,2],[2,2],[3,2]],
+          [[2,1],[2,2],[3,2],[2,3]],
+          [[1,2],[2,2],[3,2],[2,3]],
+        ],
+
+        // ゲーム上で使用するブロックの配置情報
+        usableBlocks: [],
+
         // 位置が確定したブロックの位置情報格納テーブル
         // -1 ブロック非存在, 0 緑ブロック, 1 赤ブロック, 3 青ブロック
         cellsTable: [],
@@ -45,6 +72,11 @@
           if(cell === 0)   return 'green'
           if(cell === 1)   return 'red'
           if(cell === 2)   return 'blue'
+        },
+
+        // 引数の情報からブロックの存在している座標を返す
+        getBlock(y, x, color, angle) {
+          return this.usableBlocks[color][angle].map(function(cell){ return [y + cell[0], x + cell[1]] })
         },
 
         // 操作対象のブロックの位置を変更する
@@ -68,6 +100,10 @@
         updateDisplay() {
           // 位置が確定したブロック情報を転写
           this.displayTable = JSON.parse(JSON.stringify(this.cellsTable))
+
+          // 操作中のブロック情報を転写
+          var block = this.getBlock(this.currentYX[0], this.currentYX[1], this.currentColor, this.currentAngle)
+          block.forEach(cell => { this.displayTable[cell[0]][cell[1]] = this.currentColor })
         },
 
         // ゲーム画面を初期化する
@@ -84,6 +120,9 @@
         },
       },
       mounted() {
+        // usableBocks配列に使用するブロックの種類を羅列する
+        this.usableBlocks = [this.greenBlock, this.redBlock, this.blueBlock]
+
         // ゲーム画面の初期化
         this.initTable()
 
