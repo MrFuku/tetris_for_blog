@@ -168,6 +168,18 @@
         // ブロックの位置を固定させる
         determineBlock(block, color) {
           block.forEach(cell => { this.cellsTable[cell[0]][cell[1]] = color })
+          this.removeLine()
+        },
+
+        // 列が揃ったラインを消去する
+        removeLine() {
+          // ブロックが揃っている列を検知したらその列を削除し、空の列を最上部に追加する
+          for(var i=0; i<this.cellsTable.length; i++) {
+            if (this.cellsTable[i].indexOf( -1, 0) === -1) {
+              this.cellsTable.splice(i, 1)
+              this.cellsTable.unshift( Array(this.displaySizeX).fill(-1) )
+            }
+          }
         },
 
         // ブロックの自動落下（無限ループ）
