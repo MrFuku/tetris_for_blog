@@ -107,6 +107,14 @@
           return true
         },
 
+        // ブロック同士がコンフリクトしていなければtrueを返す
+        isNotConflict(block) {
+          for(var i = 0; i < 4; i++ ) {
+            if ( this.cellsTable[block[i][0]][block[i][1]] !== -1 ) return false
+          }
+          return true
+        },
+
         // 操作対象のブロックの位置を変更する
         moveBlock(moveY, moveX, moveAngle) {
           // 操作後の座標位置
@@ -124,13 +132,16 @@
           // 操作後のブロックが画面外にあればフラグを折る
           if (!this.isBlockInside(nextBlock)) result = false
 
+          // 操作後のブロックが他のブロックと重複した位置にあればフラグを折る
+          if (result && !this.isNotConflict(nextBlock)) result = false
+
           // フラグがtrueの場合のみ操作を確定させる
           if (result) {
             this.currentYX = nextYX
             this.currentAngle = nextAngle
           }
 
-          // 床への着地した場合
+          // 床もしくは他のブロックへの着地した場合
           // 操作前の位置にブロックを固定させ、新しいブロックを生成する
           if (!result && moveY === 1) {
             var currentBlock = this.getBlock(nextYX[0] - 1, nextYX[1], this.currentColor, this.currentAngle)
