@@ -6,6 +6,7 @@
   <body>
       <div id="app">
         <h1>簡単テトリス</h1>
+        <h3>{{ reversedStartMessage }}</h3>
         <li v-for="cells in displayTable">
             <span v-for="cell in cells" :class="getColor(cell)"></span>
         </li>
@@ -15,7 +16,17 @@
   <script>
     var app = new Vue({
       el: "#app",
+      computed: {
+        // ゲームの開始状態に応じたメッセージを返す
+        reversedStartMessage() {
+          if (this.isStarted) return 'スペースキー押下でゲームをリセットします'
+          else return 'スペースキー押下でゲームを開始します'
+        }
+      },
       data: {
+        // ゲームが始まっているか判定するフラグ
+        isStarted: false,
+
         // 画面サイズY
         displaySizeY: 13,
 
@@ -142,6 +153,15 @@
           // 描画用テーブルを更新
           this.updateDisplay()
         },
+
+        // ゲームの開始状態を切り替える
+        changeGameMode() {
+          // フラグを反転させる
+          this.isStarted ^= true
+
+          // ゲーム開始状態でなければゲーム画面を初期化する
+          this.initTable()
+        }
       },
       mounted() {
         // usableBocks配列に使用するブロックの種類を羅列する
@@ -156,13 +176,14 @@
           else if (e.keyCode === 38)  this.moveBlock(-1, 0, 0) // 矢印キー左
           else if (e.keyCode === 39)  this.moveBlock(0, 1, 0)  // 矢印キー右
           else if (e.keyCode === 40)  this.moveBlock(1, 0, 0)  // 矢印キー下
+          else if (e.keyCode === 32)  this.changeGameMode()    // spaceキー
         }.bind(this)
       },
     });
   </script>
   <style>
 
-    h1 {
+    h1, h3 {
       text-align: center;
     }
 
