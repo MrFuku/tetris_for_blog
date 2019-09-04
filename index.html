@@ -79,6 +79,20 @@
           return this.usableBlocks[color][angle].map(function(cell){ return [y + cell[0], x + cell[1]] })
         },
 
+        // 位置が画面内であればtrueを返す
+        isInside(y, x) {
+          if ( y < 0 || y >= this.displaySizeY || x < 0 || x >= this.displaySizeX ) return false
+          else return true
+        },
+
+        // ブロックが画面内にあればtrueを返す
+        isBlockInside(block) {
+          for(var i = 0; i < block.length; i++ ) {
+            if ( !this.isInside(block[i][0], block[i][1]) ) return false
+          }
+          return true
+        },
+
         // 操作対象のブロックの位置を変更する
         moveBlock(moveY, moveX, moveAngle) {
           // 操作後の座標位置
@@ -86,11 +100,21 @@
 
           // 操作後の傾き
           var nextAngle = (this.currentAngle + 4 + moveAngle) % 4
-          console.log(nextYX, nextAngle)
 
-          // 操作後の値を現在の値に反映させる
-          this.currentYX = nextYX
-          this.currentAngle = nextAngle
+          // 操作後のブロック情報
+          var nextBlock = this.getBlock(nextYX[0], nextYX[1], this.currentColor, nextAngle)
+
+          // 操作後のブロックの位置が正常であるかのフラグ
+          var result = true
+
+          // 操作後のブロックが画面外にあればフラグを折る
+          if (!this.isBlockInside(nextBlock)) result = false
+
+          // フラグがtrueの場合のみ操作を確定させる
+          if (result) {
+            this.currentYX = nextYX
+            this.currentAngle = nextAngle
+          }
 
           // 描画用テーブルを更新
           this.updateDisplay()
